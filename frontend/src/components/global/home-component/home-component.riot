@@ -1,3 +1,122 @@
 <home-component>
-Hello World!
+
+
+
+<div class="container">
+    <div style="
+    margin-top: 10px;
+">
+<search-component filterSearch= {filterSearch} getProducts={getProducts}></search-component>
+
+        <form-component
+            product = {state.product}
+            _id= {state._id}
+            handleCreate = {handleCreate}
+            ></form-component>
+
+    </div>
+    
+<tableview-component 
+products = {this.state.product_list} 
+handleUpdate = {handleUpdate}
+handleDelete = {handleDelete}
+></tableview-component>
+</div>
+
+
+<footer-component>
+</footer-component>
+<script>
+    export default {
+        state: {
+            url: "http://127.0.0.1:8000/product/product-search",
+            create_url: "http://127.0.0.1:8000/product/create",
+            update_url: "http://127.0.0.1:8000/product",
+            product_list: [],
+            product: {
+                    name:"",
+                    quantity:0,
+                    price:0.00,
+                    brand:""
+            },
+            action: "create",
+            _id: "",
+        },
+
+        async onBeforeMount (){
+            this.getProducts()
+        },
+
+        async getProducts(){
+            const response  = await fetch(this.state.url)
+            const data = await response.json()
+            this.state.product_list = data.results
+            this.state.product = {
+                    name:"",
+                    quantity:0,
+                    price:0.00,
+                    brand:""
+            }
+            console.log(this.state.product_list)
+            this.state._id = ""
+            this.update()
+        },
+
+        async handleCreate(product){
+            const response  = await fetch(this.state.create_url,{
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(product)
+
+            })
+            console.log("hello")
+
+            this.getProducts()
+        },
+
+        async handleUpdate(product){
+            const response  = await fetch(this.state.update_url+`/${product._id}`,{
+                method: "put",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(product)
+
+            })
+
+            this.getProducts()
+        },
+
+        async handleDelete(product){
+            const response  = await fetch(this.state.update_url+`/${product._id}`,{
+                method: "delete"
+            })
+
+            this.getProducts()
+        },
+
+        async filterSearch(item){
+            console.log(item)
+            const response  = await fetch(this.state.url+`?name=${item}`)
+            const data = await response.json()
+            this.state.product_list = data.results
+            this.state.product = {
+                    name:"",
+                    quantity:0,
+                    price:0.00,
+                    brand:"",
+            }
+            this.state._id = ""
+            this.update()
+        }
+
+
+
+    }
+
+</script>
+
+
 </home-component>

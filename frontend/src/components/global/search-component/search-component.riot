@@ -1,0 +1,62 @@
+<search-component>
+
+<div >
+  <label for="tags">Search Products: </label>
+  <input id="tags">
+</div>
+
+
+
+
+ <script>
+
+    export default {
+
+
+      onMounted(){
+            var _ = this;
+            $( function() {
+                $( "#tags" ).autocomplete({
+                    
+                  source: function(req, res) {
+                    $.ajax({
+                      url: 'http://127.0.0.1:8000/product/product-search/suggest?name__completion=' + encodeURIComponent(req.term),
+                      type: 'GET',
+                      success: function(data) { 
+                          var available_tags = []
+                          data.name__completion[0].options.forEach(function(obj) { 
+                            
+                              available_tags.push(obj.text);
+                            });
+
+                            res(available_tags); 
+                      },
+                      error: function(jqXHR, textStatus, errorThrown) {
+                        alert('Something went wrong in the client side javascript.');
+                      },
+                      dataType: 'json',
+                      cache: false
+                    });
+                  },
+                  select: function (event, ui){
+                    _.props.filterSearch(ui.item.value)
+                    return false;
+                  }
+                }).keyup(function() {
+                        if($('#tags').val() === '') {
+                          _.props.getProducts()
+                        }
+                      });
+              } );
+
+             
+
+
+      }
+
+      }
+
+  
+  </script>
+
+</search-component>

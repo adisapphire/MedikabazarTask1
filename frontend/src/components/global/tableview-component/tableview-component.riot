@@ -1,3 +1,165 @@
 <tableview-component>
-Hello World!
+
+
+
+
+<table id="dtHorizontalVerticalExample" class="table table-striped table-bordered table-sm " cellspacing="0"
+  width="100%">
+  <thead>
+    <tr>
+      <th>Product Name</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Brand</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr each = {prod in props.products}>
+      <td data-toggle="modal" data-target="#modalUpdateForm" onclick={()=>updateState(prod.id,prod.name,prod.quantity,prod.price,prod.brand)}>{prod.name}</td>
+      <td>{prod.quantity}</td>
+      <td>{prod.price}</td>
+      <td>{prod.brand}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal fade" id="modalUpdateForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Update</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+              <form onsubmit={handleSubmit}>
+
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <i class="fas fa-envelope prefix grey-text"></i>
+          <label data-error="wrong" data-success="right" for="defaultForm-name" >Product Name</label>
+          <input type="text" id="defaultForm-name" class="form-control validate" required value={state.name}>
+        </div>
+
+        <div class="md-form mb-4">
+          <i class="fas fa-lock prefix grey-text"></i>
+          <label data-error="wrong" data-success="right" for="defaultForm-quantity" >Quantity</label>
+          <input type="number" id="defaultForm-quantity" name="quantity" min="0" value={state.quantity} class="form-control validate">
+        </div>
+
+        <div class="md-form mb-4">
+          <i class="fas fa-lock prefix grey-text"></i>
+          <label data-error="wrong" data-success="right" for="defaultForm-price">Price</label>
+          <input type="number" id="defaultForm-price" name="price" min="0" value={state.price} step="0.01" class="form-control validate">
+        </div>
+
+        <div class="md-form mb-5">
+          <i class="fas fa-envelope prefix grey-text"></i>
+          <label data-error="wrong" data-success="right" for="defaultForm-brand" >Brand</label>
+          <input type="text" id="defaultForm-brand" class="form-control validate" value={state.brand}>
+        </div>
+
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button id="UpdateModal" type="submit" class="btn btn-success" value="submit">Update</button>
+      </div>
+        </form>
+        <div class="modal-footer d-flex justify-content-center">
+        <button id="DeleteModal" type="button" class="btn btn-danger" onclick={()=>proddelete()}>Delete</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+   .dtHorizontalVerticalExampleWrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    }
+    #dtHorizontalVerticalExample th, td {
+    white-space: nowrap;
+    }
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+    bottom: .5em;
+    }
+   </style>
+   
+  <script async>
+    export default {
+        state: {
+            _id: "",
+            name: "",
+            quantity: 0,
+            price: 0.00,
+            brand:"",
+        },
+      
+      updateState(id,name,quantity,price,brand){
+        this.state._id = id
+        this.state.name = name
+        this.state.quantity = quantity
+        this.state.price = price
+        this.state.brand = brand
+        console.log(this.state)
+        this.update()
+      },
+
+      proddelete(){
+        this.props.handleDelete(this.state)
+      },
+
+      handleSubmit(event){
+            event.preventDefault();
+            const name = this.$("#defaultForm-name").value
+            const quantity = this.$("#defaultForm-quantity").value
+            const price = this.$("#defaultForm-price").value
+            const brand = this.$("#defaultForm-brand").value
+            const formResult = {name,quantity,price,brand}
+            console.log(formResult)
+            console.log("update")
+            formResult._id = this.state._id
+            this.props.handleUpdate(formResult)
+        },
+
+        onMounted(){
+          $(document).ready(function () {
+              $('#dtHorizontalVerticalExample').DataTable({
+              "scrollX": true,
+              "scrollY": 200,
+              "searching": false, 
+              "paging": false, 
+              "info": false
+              });
+              $('.dataTables_length').addClass('bs-select');
+              });
+
+          $('#UpdateModal').click(function() {
+            $('#modalUpdateForm').modal('hide');
+          });
+
+          $('#DeleteModal').click(function() {
+            $('#modalUpdateForm').modal('hide');
+          });
+
+
+        }
+
+                      
+    }
+        
+
+
+   </script>
 </tableview-component>
